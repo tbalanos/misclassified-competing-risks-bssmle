@@ -35,7 +35,7 @@ Below, we load this simulation script, generate an **external validation dataset
 #--- Generate a list of external validation datasets --------------------------
 
 # Load data-generation script (follows Mpofu et al. 2020 structure)
-source("/Users/theofanisbalanos/Desktop/Paper_1/Balanos2025_Method_Illustration/simulate_data.R")
+source("simulate_data.R")
 
 # Arguments:
 # n           : number of datasets to generate
@@ -90,7 +90,7 @@ The estimation functions are defined in the external script `pseudo_likelihood_e
 
 ```{r, message=FALSE, warning=FALSE}
 #--- Load Mpofu et al. (2020) pseudo-likelihood estimation functions -----------
-source("/Users/theofanisbalanos/Desktop/Paper_1/Balanos2025_Method_Illustration/pseudo_likelihood_estimation_Mpofu.R")
+source("pseudo_likelihood_estimation_Mpofu.R")
 ```
 
 ### | Probability of Observing Cause 2 Given True Cause 1
@@ -153,7 +153,7 @@ The same simulation procedure used for the external validation data is employed 
 #--- Generate the main (analysis) dataset -------------------------------------
 
 # Load the same simulation script (already loaded earlier, shown again for clarity)
-source("/Users/theofanisbalanos/Desktop/Paper_1/Balanos2025_Method_Illustration/simulate_data.R")
+source("simulate_data.R")
 
 # Create one main dataset with no internal validation (ds = 0)
 main_data_list <- data_list(n = 1,
@@ -206,7 +206,7 @@ The estimation function `bssmle()` is defined in the external R script `bssmle.R
 
 ```{r, message=FALSE, warning=FALSE}
 #--- Load the proposed semiparametric regression function ---------------------
-source("/Users/theofanisbalanos/Desktop/Paper_1/Balanos2025_Method_Illustration/bssmle.R")
+source("bssmle.R")
 
 #--- Fit the model to the main dataset ----------------------------------------
 # Specify which covariates to include (must match column names in dat_main)
