@@ -1,5 +1,5 @@
 ---
-title: "Illustrative Example: Applying the Semiparametric Regression Method for Misclassified Competing Risks Data"
+title: "Illustrative Example: Applying the Semiparametric Regression Method for Misclassified Competing Risks Data Using External Validation"
 author:
 - Theofanis Balanos^[Department of Biostatistics and Health Data Science, Fairbanks School of Public Health and School of Medicine, Indiana University Indianapolis, IN, USA]
 - Giorgos Bakoyannis^[Department of Biostatistics and Health Data Science, Fairbanks School of Public Health and School of Medicine, Indiana University Indianapolis, IN, USA]
