@@ -58,7 +58,7 @@ The model uses:
 * time- and covariate-dependent misclassification
 * externally observed true causes
 
-The estimated coefficients ($\hat\gamma$) are later used to compute predicted misclassification probabilities in the main analysis dataset.
+The estimated coefficients are later used to compute predicted misclassification probabilities in the main analysis dataset.
 
 ---
 
