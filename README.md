@@ -1,3 +1,20 @@
+# Semiparametric Regression for Misclassified Competing Risks Data
+
+R code accompanying the paper:
+
+*"Semiparametric Regression for Misclassified Competing Risks Data"*
+
+This repository contains all functions and reproducible example code needed to:
+
+1. Simulate competing risks data with time- and covariate-dependent misclassification.
+2. Estimate time- and covariate-dependent misclassification probabilities using an external validation sample.
+3. Fit the proposed semiparametric regression model using a B-spline-based pseudo-likelihood approach.
+4. Conduct sensitivity analyses for violations of the transportability assumption.
+5. Perform bootstrap inference for regression parameters while accounting for uncertainty in the estimated misclassification probabilities.
+6. Compute and plot cumulative incidence functions (CIFs) under each sensitivity-analysis setting.
+
+---
+
 ## **Repository contents**
 
 ### **Core estimation functions**
