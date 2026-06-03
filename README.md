@@ -85,7 +85,7 @@ To examine violations of the transportability assumption, misclassification prob
 
 $logit(p_{jh}(η)) = logit(p_{jh}) + η$, with $η \in$ {-0.5, -0.25, 0, 0.25, 0.5}.
 
-Each modified misclassification scenario yields a new set of regression estimates, allowing assessment of robustness to misclassification misspecification.
+Each modified misclassification scenario yields a new set of regression estimates, allowing assessment of robustness against transportability assumption violations.
 
 ---
 
