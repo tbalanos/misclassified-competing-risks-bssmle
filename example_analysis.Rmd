@@ -119,8 +119,8 @@ model_fit_example1 <- misclass_ps_est(dat = dat_external,
 model_fit_example1$test_summary
 
 # Store estimated coefficients and variance-covariance matrix
-gamma_hat_12 <- model_fit_example1$parEst
-Omega_hat_12 <- model_fit_example1$varEst
+gamma_hat_21 <- model_fit_example1$parEst
+Omega_hat_21 <- model_fit_example1$varEst
 ```
 
 ### | Probability of observing cause 1 given true cause 2
@@ -147,8 +147,8 @@ model_fit_example2 <- misclass_ps_est(dat = dat_external,
 model_fit_example2$test_summary
 
 # Store estimated coefficients and variance-covariance matrix
-gamma_hat_21 <- model_fit_example2$parEst
-Omega_hat_21 <- model_fit_example2$varEst
+gamma_hat_12 <- model_fit_example2$parEst
+Omega_hat_12 <- model_fit_example2$varEst
 ```
 
 The estimated coefficient vectors \(\hat{\gamma}_{12}\) and \(\hat{\gamma}_{21}\), together with their corresponding variance-covariance matrices \(\hat{\Omega}_{12}\) and \(\hat{\Omega}_{21}\), are carried forward to the main analysis. These quantities are used to compute subject-specific misclassification probabilities and to account for uncertainty in the estimated misclassification model during bootstrap inference.
