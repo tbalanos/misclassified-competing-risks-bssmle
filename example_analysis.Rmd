@@ -422,8 +422,8 @@ boot_results <- replicate(n_boot, {
                               tol = 1e-6)
 
   # Recompute misclassification probabilities in the bootstrap sample
-  dat_boot$p21 <- trim_prob(compute_p21_boot(dat_boot, gamma_12_b))
-  dat_boot$p12 <- trim_prob(compute_p12_boot(dat_boot, gamma_21_b))
+  dat_boot$p21 <- trim_prob(compute_p21_boot(dat_boot, gamma_21_b))
+  dat_boot$p12 <- trim_prob(compute_p12_boot(dat_boot, gamma_12_b))
 
   # Fit the model on each bootstrap sample
   bssmle(dat_boot, covariates = covariates)
@@ -612,6 +612,12 @@ legend("topleft", legend = sapply(etas, \(e) bquote(eta == .(e))),
 ## Concluding remarks
 
 This example illustrated how to apply the proposed semiparametric regression method for competing risks data with misclassified causes of failure. Using simulated data, we demonstrated how to estimate misclassification probabilities from an external validation sample, fit the proposed model using these probabilities, account for uncertainty in the estimated misclassification model during bootstrap inference, and assess robustness through sensitivity analysis. The approach yields corrected and interpretable estimates of cause-specific effects and cumulative incidence functions, providing a practical framework for analyzing competing risks data subject to outcome misclassification.
+
+
+
+
+
+
 
 
 
