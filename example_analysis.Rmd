@@ -119,8 +119,8 @@ model_fit_example1 <- misclass_ps_est(dat = dat_external,
 model_fit_example1$test_summary
 
 # Store estimated coefficients and variance-covariance matrix
-gamma_hat_12 <- model_fit_example1$model_miscl$coefficients
-Omega_hat_12 <- model_fit_example1$model_miscl$var
+gamma_hat_12 <- model_fit_example1$parEst
+Omega_hat_12 <- model_fit_example1$varEst
 ```
 
 ### | Probability of observing cause 1 given true cause 2
@@ -147,8 +147,8 @@ model_fit_example2 <- misclass_ps_est(dat = dat_external,
 model_fit_example2$test_summary
 
 # Store estimated coefficients and variance-covariance matrix
-gamma_hat_21 <- model_fit_example2$model_miscl$coefficients
-Omega_hat_21 <- model_fit_example2$model_miscl$var
+gamma_hat_21 <- model_fit_example2$parEst
+Omega_hat_21 <- model_fit_example2$varEst
 ```
 
 The estimated coefficient vectors \(\hat{\gamma}_{12}\) and \(\hat{\gamma}_{21}\), together with their corresponding variance-covariance matrices \(\hat{\Omega}_{12}\) and \(\hat{\Omega}_{21}\), are carried forward to the main analysis. These quantities are used to compute subject-specific misclassification probabilities and to account for uncertainty in the estimated misclassification model during bootstrap inference.
@@ -612,6 +612,9 @@ legend("topleft", legend = sapply(etas, \(e) bquote(eta == .(e))),
 ## Concluding remarks
 
 This example illustrated how to apply the proposed semiparametric regression method for competing risks data with misclassified causes of failure. Using simulated data, we demonstrated how to estimate misclassification probabilities from an external validation sample, fit the proposed model using these probabilities, account for uncertainty in the estimated misclassification model during bootstrap inference, and assess robustness through sensitivity analysis. The approach yields corrected and interpretable estimates of cause-specific effects and cumulative incidence functions, providing a practical framework for analyzing competing risks data subject to outcome misclassification.
+
+
+
 
 
 
