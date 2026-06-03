@@ -83,7 +83,7 @@ This method corrects for outcome misclassification using externally estimated mi
 
 To examine violations of the transportability assumption, misclassification probabilities in the main dataset are adjusted via
 
-$logit(p_{jh}(η)) = logit(p_{jh}) + η$, with $η \in$ {$-0.5, -0.25, 0, 0.25, 0.5$}.
+$logit(p_{jh}(η)) = logit(p_{jh}) + η$, with $η \in$ {-0.5, -0.25, 0, 0.25, 0.5}.
 
 Each modified misclassification scenario yields a new set of regression estimates, allowing assessment of robustness to misclassification misspecification.
 
