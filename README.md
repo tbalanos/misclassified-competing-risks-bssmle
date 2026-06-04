@@ -51,8 +51,8 @@ This repository contains all functions and reproducible example code needed to:
 R (≥ 4.0) and the following packages:
 
 ```r
-install.packages(c("alabama", "splines", "survival", "MASS", "boot",
-                   "sandwich", "numDeriv", "Hmisc", "TeachingDemos"))
+install.packages(c("alabama", "splines", "survival", "MASS", "boot", "sandwich",
+                   "numDeriv", "Hmisc", "TeachingDemos", "lmtest"))
 ```
 
 ## Quick start
