@@ -279,33 +279,44 @@ cat("\nNumber of B-spline basis coefficients per cause:", n, "\n")
 
 ---
 
-## Step 6 – Sensitivity analysis for misclassification probabilities  
+## Step 6 – Sensitivity analysis for misclassification probabilities
 
-To examine the robustness of our method when the true misclassification rates differ from those estimated in the validation data, we conduct a sensitivity analysis following the framework described in the relevant Section of the paper.  
+The proposed method relies on the *transportability assumption*: the misclassification probabilities estimated from the external validation dataset apply to the main study population. Following Section 4 of the paper, we examine the robustness of the method to violations of this assumption through a sensitivity analysis indexed by a parameter \(\eta\).
 
-Under this framework, the *adjusted misclassification probabilities* are given by  
+Let \(S = 1\) denote the main study sample and \(S = 0\) the external validation study sample. The transportability assumption states that
 \[
-\pi^*_{jh}(X,Z,T;\gamma_{0,h},\eta)
-   = g(\gamma'_{0,h}\,\tilde{\mathbf{W}} + \eta S),
+P(C^* = j \mid C = h, S = 0, T = t, Z = z)
+= P(C^* = j \mid C = h, S = 1, T = t, Z = z)
+= g_{jh}\!\left(\gamma_{0,jh}^{\top} \tilde{W}\right),
 \]
-where \(g(\cdot)\) is the logistic function, \(\tilde{\mathbf{W}}\) represents the covariates associated with misclassification (e.g., event time \(T\) and covariates \(Z\)) and \(S\) is an indicator for the data source (\(S=0\) for the external validation dataset and \(S=1\) for the main analysis dataset). The parameter \(\eta\) controls how much the misclassification mechanism in the main study deviates from that estimated in the external validation sample. In this setting, \(\eta = 0\) corresponds to **perfect transportability**, i.e. same misclassification probabilities, while \(\eta \neq 0\) represents a violation of transportability, i.e. there are diﬀerences between main and external datasets.
-
-For practical implementation, we adjust both estimated misclassification probabilities  
+where \(g_{jh}(\cdot)\) is the inverse of a link function corresponding to the misclassification probability from true cause \(h\) to observed cause \(j\), \(\gamma_{0,jh}\) is the unknown parameter vector estimated from the external validation sample, and \(\tilde{W} = (1, T, Z^{\top})^{\top}\). If the transportability assumption is violated, the last equality does not hold. For such situations, we define
 \[
-p_{21} = P(C^{*}=2 \mid C=1,\,T=t,\,Z), \qquad
-p_{12} = P(C^{*}=1 \mid C=2,\,T=t,\,Z),
+P(C^* = j \mid C = h, S, T = t, Z = z)
+= g_{jh}\!\left(\gamma_{0,jh}^{\top}\tilde{W} + \eta S\right).
 \]
-by applying a **logit shift** with \(\eta \in \{-0.5,-0.25,0,0.25,0.5\}\):  
+When \(\eta = 0\), transportability holds; when \(\eta \neq 0\), it is violated.
+
+For \(k = 2\) and a logistic model for the misclassification probability, \(\eta\) has a direct interpretation as a log odds ratio, comparing the odds of observing \(C^* = j\) in the main dataset (\(S = 1\)) to the odds in the external validation dataset (\(S = 0\)), conditional on \(C = h\), \(T\), and \(Z\):
 \[
-\text{logit}\{p_{jh}^{(\eta)}\}
-   = \text{logit}\{p_{jh}\} + \eta,
-   \quad\text{so}\quad
-   p_{jh}^{(\eta)} = \operatorname{logit}^{-1}\{\operatorname{logit}(p_{jh})+\eta\}.
+\eta = \log\!\left(
+\frac{P(C^* = j \mid C = h, S = 1, T, Z)\,\big/\,[1 - P(C^* = j \mid C = h, S = 1, T, Z)]}
+     {P(C^* = j \mid C = h, S = 0, T, Z)\,\big/\,[1 - P(C^* = j \mid C = h, S = 0, T, Z)]}
+\right).
 \]
 
-This transformation is a direct empirical version of \(\pi^*_{jh}(X,Z,T;\gamma_{0,h},\eta) = g(\gamma'_{0,h}\tilde{\mathbf{W}}+\eta S)\) for the main analysis dataset (\(S=1\)).  
+In practice, because the main study corresponds to \(S = 1\), incorporating \(\eta\) is equivalent to applying a logit shift to the estimated misclassification probabilities
+\[
+p_{21} = P(C^{*}=2 \mid C=1,\, T=t,\, Z), \qquad
+p_{12} = P(C^{*}=1 \mid C=2,\, T=t,\, Z):
+\]
+\[
+\mathrm{logit}\!\left\{p_{jh}^{(\eta)}\right\}
+= \mathrm{logit}\!\left\{p_{jh}\right\} + \eta,
+\quad\text{so}\quad
+p_{jh}^{(\eta)} = \mathrm{logit}^{-1}\!\left\{\mathrm{logit}(p_{jh}) + \eta\right\}.
+\]
 
-For each \(\eta\), we re-fit the proposed semiparametric regression model using `bssmle()` and record the resulting regression coefficients for both causes. In the bootstrap step, this same sensitivity adjustment can be applied after regenerating the misclassification model parameters, so that both transportability sensitivity and uncertainty in the estimated misclassification probabilities are reflected in the inference.  
+For each \(\eta \in \{-0.5, -0.25, 0, 0.25, 0.5\}\), the pseudo-likelihood in equation (3) of the paper is maximized using `bssmle()` with the adjusted misclassification probabilities. In the bootstrap step, this same sensitivity adjustment can be applied after regenerating the misclassification model parameters, so that both transportability sensitivity and uncertainty in the estimated misclassification probabilities are reflected in the inference. 
 
 ```{r, message=FALSE, warning=FALSE}
 #--- Sensitivity analysis implementation (bidirectional adjustment) -----------
@@ -404,6 +415,9 @@ compute_p12_boot <- function(dat, gamma_vec) {
 }
 
 #--- Bootstrap procedure ------------------------------------------------------
+# Expected length of bssmle() output, used to pad failed fits with NA
+expected_len <- length(fit_bssmle)
+
 boot_results <- replicate(n_boot, {
 
   # Resample individuals with replacement
@@ -426,14 +440,18 @@ boot_results <- replicate(n_boot, {
   dat_boot$p12 <- trim_prob(compute_p12_boot(dat_boot, gamma_12_b))
 
   # Fit the model on each bootstrap sample
-  bssmle(dat_boot, covariates = covariates)
+  res <- bssmle(dat_boot, covariates = covariates)
+
+  # Ensure every replicate returns a vector of the expected length so that
+  # replicate() produces a proper matrix even if some fits fail to converge
+  if (length(res) != expected_len) rep(NA_real_, expected_len) else res
 
 }, simplify = "array")
 
 # Compute bootstrap-based standard deviations (SEs)
 boot_sds <- apply(boot_results, 1, sd, na.rm = TRUE)
 
-### Summarize bootstrap inference results -------------------------------------
+#--- Summarize bootstrap inference results ------------------------------------
 
 # Direct model fit from Step 5
 theta_hat <- fit_bssmle
@@ -470,7 +488,7 @@ knitr::kable(
 )
 ```
 
-### Notes
+#### Notes
 
 * The number of bootstrap replicates (`n_boot`) can be increased to improve accuracy.
 * Each bootstrap replicate resamples individuals and regenerates the misclassification-model parameters using their estimated variance-covariance matrices.
@@ -518,11 +536,11 @@ library(splines)
 # Sensitivity parameters to test
 etas <- c(-0.5, -0.25, 0, 0.25, 0.5)
 covariates <- c("z1", "z2")
+q <- length(covariates)
 
 # Define a representative subject profile:
-#   z1 = mean of the continuous covariate,
-#   z2 = mean of the continuous covariate
-Z1 <- c(mean(dat_main$z1, na.rm = TRUE), mean(dat_main$z2, na.rm = TRUE))
+#   all continuous covariates set to their sample means
+Z1 <- sapply(covariates, function(v) mean(dat_main[[v]], na.rm = TRUE))
 Z2 <- Z1
 
 # --- Fit the semiparametric model for each η value ---
@@ -546,14 +564,17 @@ deg_fit   <- 3                                                # cubic B-splines
 t_grid <- seq(bkn_fit[1], bkn_fit[2], length.out = 200)       # fine time grid
 Bpred  <- bs(t_grid, knots = knots_fit, degree = deg_fit,
              intercept = TRUE, Boundary.knots = bkn_fit)
-dt <- c(0, diff(t_grid))                                      # time step differences
+dt <- diff(t_grid)
+dt <- c(dt[1], dt)                                            # match length of t_grid
 
 # --- Function to compute CIFs from model coefficients ---
-# Uses baseline hazard splines and covariate effects to get F1(t) and F2(t)
-compute_cif <- function(res, Bpred, Z1, Z2, t_grid, dt) {
-  n  <- (length(res) - 4) / 2
-  phi1 <- res[1:n]; phi2 <- res[(n+1):(2*n)]
-  b1   <- res[(2*n+1):(2*n+2)]; b2 <- res[(2*n+3):(2*n+4)]
+# Adapts automatically to the number of covariates q
+compute_cif <- function(res, Bpred, Z1, Z2, t_grid, dt, q) {
+  n  <- (length(res) - 2*q) / 2
+  phi1 <- res[1:n]
+  phi2 <- res[(n + 1):(2*n)]
+  b1   <- res[(2*n + 1):(2*n + q)]
+  b2   <- res[(2*n + q + 1):(2*n + 2*q)]
 
   # Baseline cumulative hazards
   H01 <- exp(Bpred %*% phi1)
@@ -577,7 +598,7 @@ compute_cif <- function(res, Bpred, Z1, Z2, t_grid, dt) {
 
 # --- Compute CIFs for all η values ---
 cif_list <- lapply(fit_eta, compute_cif, Bpred = Bpred,
-                   Z1 = Z1, Z2 = Z2, t_grid = t_grid, dt = dt)
+                   Z1 = Z1, Z2 = Z2, t_grid = t_grid, dt = dt, q = q)
 
 # --- Plot the CIFs for each cause ---
 # y-axis fixed between 0 and 1 for comparability
@@ -612,6 +633,26 @@ legend("topleft", legend = sapply(etas, \(e) bquote(eta == .(e))),
 ## Concluding remarks
 
 This example illustrated how to apply the proposed semiparametric regression method for competing risks data with misclassified causes of failure. Using simulated data, we demonstrated how to estimate misclassification probabilities from an external validation sample, fit the proposed model using these probabilities, account for uncertainty in the estimated misclassification model during bootstrap inference, and assess robustness through sensitivity analysis. The approach yields corrected and interpretable estimates of cause-specific effects and cumulative incidence functions, providing a practical framework for analyzing competing risks data subject to outcome misclassification.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
