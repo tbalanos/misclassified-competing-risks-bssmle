@@ -201,7 +201,7 @@ bssmle <- function(data, covariates = c("z1", "z2", "z3")) {
   est<-try(constrOptim(b0, f=nLL, grad=Grad, ui=ui,
                        ci=ci,control=list(maxit=2000)),
            silent=TRUE)
-  if(class(est)!="try-error"){
+  if(!inherits(est, "try-error")){
     if(est$convergence==0){
       beta<-est$par
       #print(-est$value)
