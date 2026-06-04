@@ -46,6 +46,25 @@ This repository contains all functions and reproducible example code needed to:
 
 ---
 
+## Requirements
+
+R (≥ 4.0) and the following packages:
+
+```r
+install.packages(c("alabama", "splines", "survival", "MASS", "boot",
+                   "sandwich", "numDeriv", "Hmisc", "TeachingDemos"))
+```
+
+## Quick start
+
+Open `example_analysis.Rmd` in RStudio and knit it. The example is
+self-contained: it simulates an external validation dataset, fits the
+misclassification model, generates the main analysis dataset, applies
+the proposed semiparametric estimator, runs the η-grid sensitivity
+analysis, performs bootstrap inference, and plots CIFs.
+
+---
+
 ## **Method overview**
 
 ### **1. External validation and misclassification modeling**
