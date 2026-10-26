@@ -118,7 +118,7 @@ R_create <- function(dat, formula_pred_val, formula_mis, ps_list) {
   X <- model.matrix(formula_mis, data = dat)
   w11 <- with(dat, (1 - r) * (1 - d1_obs) * (1 - p_t1_obs2) * p_t1_obs2)
   w12 <- with(dat, (1 - r) * d1_obs * (-p_t2_obs1) * (1 - p_t2_obs1))
-  w2 <- with(dat, d2_obs - ps_list$pseudo.p)
+  w2 <- with(dat, (1 - d1_obs) - ps_list$pseudo.p)
   
   R1 <- (t(Z * w11 * w2) %*% X)
   R2 <- (t(Z * w12 * w2) %*% X)
@@ -134,7 +134,7 @@ sand_compute <- function(plug_list, ps_list, R) {
   v1 <- plug_list$v1
   v2 <- plug_list$v2
   var1 <- H %*% (t(ps_list$pseudo.score)
-                 + R$R1 %*% v1 %*% t(plug_list$score1)
+                 + t(R$R1) %*% v1 %*% t(plug_list$score1)
                  + t(R$R2) %*% v2 %*% t(plug_list$score2))
   var1 <- var1 %*% t(var1)
   var1
